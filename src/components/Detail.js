@@ -1,44 +1,57 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
+//firebase
+import db from "../firebase";
+//use params
+import { useParams } from "react-router-dom";
+
 const Detail = () => {
+  const { id } = useParams();
+  const [movie, setMovie] = useState();
+  useEffect(() => {
+    db.collection("movies")
+      .doc(id)
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          setMovie(doc.data());
+        } else {
+          console.log("movie not loaded");
+        }
+      });
+  }, [id]);
   return (
     <Container>
-      <Background>
-        <img
-          src="https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/706C68FF1CEA5A9C2AE0608892C2DF79E4AC1F0DDB4BFF7FE6DAFC36DAFC0286/scale?width=1200&aspectRatio=1.78&format=jpeg"
-          alt=""
-        />
-      </Background>
+      {movie && (
+        <>
+          <Background>
+            <img src={movie.backgroundImg} alt="" />
+          </Background>
+          <ImageTitle>
+            <img src={movie.titleImg} alt="" />
+          </ImageTitle>
+          <Controls>
+            <PlayButton>
+              <img src="/images/play-icon-black.png" alt="" />
+              <span>PLAY</span>
+            </PlayButton>
+            <TrailerButton>
+              <img src="/images/play-icon-white.png" alt="" />
+              <span>TRAILER</span>
+            </TrailerButton>
+            <AddButton>
+              <span>+</span>
+            </AddButton>
+            <GroupWatchButton>
+              <img src="/images/group-icon.png" alt="" />
+            </GroupWatchButton>
+          </Controls>
+          <SubTitle>{movie.subTitle}</SubTitle>
+          <Description>{movie.description}</Description>
+        </>
+      )}
 
-      <ImageTitle>
-        <img
-          src="https://img.buzzfeed.com/buzzfeed-static/static/2018-06/12/18/asset/buzzfeed-prod-web-04/sub-buzz-11036-1528842860-1.png"
-          alt=""
-        />
-      </ImageTitle>
-      <Controls>
-        <PlayButton>
-          <img src="/images/play-icon-black.png" alt="" />
-          <span>PLAY</span>
-        </PlayButton>
-        <TrailerButton>
-          <img src="/images/play-icon-white.png" alt="" />
-          <span>TRAILER</span>
-        </TrailerButton>
-        <AddButton>
-          <span>+</span>
-        </AddButton>
-        <GroupWatchButton>
-          <img src="/images/group-icon.png" alt="" />
-        </GroupWatchButton>
-      </Controls>
-      <SubTitle>2018 . 7m . Famiily, Fantasy, Kids, Animation</SubTitle>
-      <Description>
-        A Chinese mom who's sad when her grown son leaves home gets another
-        chance at motherhood when one of her dumplings spring to life. But she
-        finds nothing stays cute and small forever.
-      </Description>
     </Container>
   );
 };
