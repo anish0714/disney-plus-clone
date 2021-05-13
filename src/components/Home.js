@@ -7,15 +7,21 @@ import Movies from "./Movies";
 //FIREBASE
 import db from "../firebase";
 
+//REDUX
+import { useDispatch } from "react-redux";
+import { setMovies } from "../features/movie/movieSlice";
+
 const Home = () => {
+  const dispatch = useDispatch();
+
   useEffect(() => {
     db.collection("movies").onSnapshot((snapshot) => {
       let tempMovies = snapshot.docs.map((doc) => {
         return { id: doc.id, ...doc.data() };
       });
-      console.log(tempMovies);
+      dispatch(setMovies(tempMovies));
     });
-  }, []);
+  }, [dispatch]);
   return (
     <Container>
       <ImageSlider />
